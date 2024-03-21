@@ -1,4 +1,4 @@
-/*
+﻿/*
 Во всех задачах из следующего списка следует написать структуру данных, обрабатывающую команды push* и pop*.
 Формат входных данных.
 В первой строке количество команд n. n ≤ 1000000.
@@ -18,10 +18,12 @@ a = 4 - pop back
 */
 
 #include <iostream>
+#include<cassert>
 
+template <class T>
 class Stack {
 private:
-    int* data;
+    T* data;
     size_t capacity;
     size_t size;
 
@@ -35,7 +37,7 @@ public:
             delete[] data;
             capacity = other.capacity;
             size = other.size;
-            data = new int[capacity];
+            data = new T[capacity];
             for (size_t i = 0; i < size; ++i) {
                 data[i] = other.data[i];
             }
@@ -47,10 +49,10 @@ public:
         delete[] data;
     }
 
-    void push(const int& value) {
+    void push(const T& value) {
         if (size == capacity) {
             size_t newCapacity = (capacity == 0) ? 1 : capacity * 2;
-            int* newData = new int[newCapacity];
+            T* newData = new T[newCapacity];
 
             for (size_t i = 0; i < size; ++i) {
                 newData[i] = data[i];
@@ -64,10 +66,8 @@ public:
         data[size++] = value;
     }
 
-    int pop() {
-        if (size == 0) {
-            return -1;
-        }
+    T pop() {
+        assert(size != 0 && "Empty stack");
 
         return data[--size];
     }
@@ -81,10 +81,11 @@ public:
     }
 };
 
+template <class T>
 class Queue {
 private:
-    Stack stIn;
-    Stack stOut;
+    Stack<T> stIn;
+    Stack<T> stOut;
 
 public:
     Queue() : stIn(), stOut() {}
@@ -100,14 +101,14 @@ public:
     }
 
     ~Queue() {
-        
+
     }
 
-    void pushBack(const int& value) {
+    void pushBack(const T& value) {
         stIn.push(value);
     }
 
-    int popFront() {
+    T popFront() {
         if (stOut.isEmpty()) {
             while (!stIn.isEmpty()) {
                 stOut.push(stIn.pop());
@@ -115,32 +116,51 @@ public:
         }
         return stOut.pop();
     }
+
+    size_t queueSize() const {
+        return stIn.stackSize() + stOut.stackSize();
+    }
 };
 
 int main()
 {
-    Queue queue;
+    Queue<int> queue;
     int n = 0;
     std::cin >> n;
     for (int i = 0; i < n; i++) {
         int op = 0, val = 0;
         std::cin >> op >> val;
         switch (op) {
-        case 2: {
-            int tmpVal = queue.popFront();
-            if (tmpVal != val) {
-                std::cout << "NO";
-                return;
+            case 2: {
+                if (queue.queueSize() > 0) {
+                    int tmpVal = queue.popFront();
+                    if (tmpVal != val) {
+                        std::cout << "NO" << std::endl;
+                        return 0;
+                    }
+                }
+                else {
+                    if (val != -1) {
+                        std::cout << "NO" << std::endl;
+                        return 0;
+                    }
+                }
+                break;
+
             }
-            break;
+            case 3: {
+                queue.pushBack(val);
+                break;
+            }
         }
-        case 3: {
-            queue.pushBack(val);
-            break;
-        }
-        }
+
     }
-    std::cout << "Yes";
+    std::cout << "YES" << std::endl;
 
     return 0;
 }
+
+//Вычислительная сложность одной операции с очередью: ~O(1)
+//Для задачи в общем: O(n)
+//Потребляемая память: 20 байт + 4 байта * (сумма длин 2 стеков)
+
