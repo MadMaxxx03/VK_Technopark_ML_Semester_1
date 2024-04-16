@@ -1,0 +1,58 @@
+title Сиквенс схема расширящего функционала
+
+actor User
+participant App
+participant Security component
+participant REST Controller
+participant Service Layer
+participant Repository Layer
+database DataBase
+participant GUI
+participant P2P
+
+activate User
+User->App:Делает запрос
+deactivate User
+
+activate App
+App->Security component:Запрос
+activate Security component
+
+App->REST Controller:Запрос
+activate REST Controller
+REST Controller->Security component:Проверка доступа
+Security component-->REST Controller:Ответ по проверке
+deactivate Security component 
+
+REST Controller->Service Layer:Запрос
+activate Service Layer
+deactivate REST Controller
+
+
+
+Service Layer->Repository Layer:Запрос к БД
+activate Repository Layer
+
+Repository Layer->DataBase:Обращение к базе
+activate DataBase
+DataBase-->Repository Layer:Получение информации
+deactivate DataBase
+
+Repository Layer-->Service Layer:Получение информации
+deactivate Repository Layer
+
+Service Layer->GUI:Отображение изменений
+activate GUI
+
+
+GUI->App:Визуализирует чат
+App-->User:Видит чат
+activate User
+Service Layer->P2P:Установка соединения
+activate P2P
+deactivate Service Layer
+
+
+P2P-->App:Подключение видеозвонка
+
+App-->User:Разговаривает по видео
