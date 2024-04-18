@@ -1,0 +1,5 @@
+﻿  Task1.cpp
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task1\Task1\Task1.cpp(16,10): warning C4067: непредвиденные лексемы за директивой препроцессора, требуется newline
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task1\Task1\Task1.cpp(23,55): error C3861: _hasher: идентификатор не найден
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task1\Task1\Task1.cpp(143,2): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "HashTable<T,H>"
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task1\Task1\Task1.cpp(23,55): error C2065: _hasher: необъявленный идентификатор
