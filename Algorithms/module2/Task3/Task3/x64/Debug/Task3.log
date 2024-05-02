@@ -1,0 +1,30 @@
+﻿  Task3.cpp
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(167,12): warning C4101: cmp: неиспользованная локальная переменная
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(133,1): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(132,1): message : во время компиляции функции-члена класс шаблон "void BTree<int,IntCmp>::insertNonFull(BTree<int,IntCmp>::Node *,const T &)"
+          with
+          [
+              T=int
+          ]
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(34,22): message : выполняется компиляция ссылки на экземпляр шаблон функции "void BTree<int,IntCmp>::insertNonFull(BTree<int,IntCmp>::Node *,const T &)"
+          with
+          [
+              T=int
+          ]
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(171,30): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "BTree<int,IntCmp>"
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(111,1): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(93,1): message : во время компиляции функции-члена класс шаблон "void BTree<int,IntCmp>::splitChild(BTree<int,IntCmp>::Node *,size_t)"
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(32,23): message : выполняется компиляция ссылки на экземпляр шаблон функции "void BTree<int,IntCmp>::splitChild(BTree<int,IntCmp>::Node *,size_t)"
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(117,1): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(70,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(60,1): message : во время компиляции функции-члена класс шаблон "void BTree<int,IntCmp>::printTree(BTree<int,IntCmp>::Node *,void (__cdecl *)(const T &)) const"
+          with
+          [
+              T=int
+          ]
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\Task3\Task3.cpp(38,18): message : выполняется компиляция ссылки на экземпляр шаблон функции "void BTree<int,IntCmp>::printTree(BTree<int,IntCmp>::Node *,void (__cdecl *)(const T &)) const"
+          with
+          [
+              T=int
+          ]
+  Task3.vcxproj -> C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task3\x64\Debug\Task3.exe

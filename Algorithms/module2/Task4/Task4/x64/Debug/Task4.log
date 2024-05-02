@@ -1,0 +1,6 @@
+﻿  Task4.cpp
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task4\Task4\Task4.cpp(150,1): warning C4267: return: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task4\Task4\Task4.cpp(149,1): message : во время компиляции функции-члена класс шаблон "int AvlTree<int,IntCmp>::getBalance(AvlTree<int,IntCmp>::Node *)"
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task4\Task4\Task4.cpp(176,9): message : выполняется компиляция ссылки на экземпляр шаблон функции "int AvlTree<int,IntCmp>::getBalance(AvlTree<int,IntCmp>::Node *)"
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task4\Task4\Task4.cpp(205,35): message : выполняется компиляция ссылки на экземпляр класс шаблон функции "AvlTree<int,IntCmp>"
+  Task4.vcxproj -> C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task4\x64\Debug\Task4.exe
