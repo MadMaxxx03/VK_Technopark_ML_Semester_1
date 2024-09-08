@@ -1,0 +1,5 @@
+﻿  Task5.cpp
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task5\Task5\Task5.cpp(195,1): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task5\Task5\Task5.cpp(312,30): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task5\Task5\Task5.cpp(338,36): warning C4267: инициализация: преобразование из "size_t" в "int"; возможна потеря данных
+  Task5.vcxproj -> C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module2\Task5\x64\Debug\Task5.exe

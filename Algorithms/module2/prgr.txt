@@ -1,0 +1,471 @@
+#include <list>
+#include <map>
+#include <sstream>
+#include <stack>
+#include <vector>
+#include <cstddef>
+#include <fstream>
+#include <iostream>
+#include <bitset>
+#include <cassert>
+#include <clocale>
+
+using std::stack;
+using std::list;
+using std::map;
+using std::string;
+using std::vector;
+
+typedef unsigned char byte;
+
+struct IInputStream {
+    virtual bool Read(byte& value) = 0;
+};
+
+struct IOutputStream {
+    virtual void Write(byte value) = 0;
+};
+
+vector<string> TREE_BINS;
+class Node {
+public:
+    Node() : left(nullptr), right(nullptr) {}
+    Node(Node* l, Node* r) : left(l), right(r), elementsCount(l->elementsCount + r->elementsCount) {}
+
+    size_t elementsCount = 0;
+    byte byteChar = 0;
+    Node* left;
+    Node* right;
+};
+
+Node* loadTree(vector<string>& bins) {
+    Node* root = nullptr;
+    stack<Node*> stack;
+
+    for (int i = 0; i < bins.size(); i++) {
+        if (bins[i] == "1") {
+            Node* node = new Node();
+            char c = bins[++i][0];
+            node->byteChar = (char)c;
+            stack.push(node);
+        }
+
+        if (bins[i] == "0") {
+            if (stack.size() == 1) {
+                stack.pop();
+                std::cout << "Остался один в стеке";
+                break;
+            };
+
+            if (stack.size() >= 2) {
+                Node* root = new Node();
+
+                root->right = stack.top();
+                stack.pop();
+
+                root->left = stack.top();
+                stack.pop();
+
+                root = root;
+                stack.push(root);
+            }
+        }
+    }
+    return root;
+}
+
+void saveTree(Node* node, vector<string>& bins) {
+    if (!node) {
+        return;
+    }
+
+    if (!node->left && !node->right) {
+        bins.push_back("1");
+        std::string str = "";
+        str = node->byteChar;
+        bins.push_back(str);
+    }
+    else {
+        if (node->left) {
+            saveTree(node->left, bins);
+        }
+        if (node->right) {
+            saveTree(node->right, bins);
+        }
+        bins.push_back("0");
+    }
+}
+
+class HuffmanEncoder {
+public:
+    HuffmanEncoder() {}
+
+    ~HuffmanEncoder() = default;
+
+    void deleteNode(Node*& node) {
+        if (!node) {
+            return;
+        }
+
+        std::vector<Node*> curr;
+        std::vector<Node*> next;
+
+        curr.push_back(root);
+        while (!curr.empty()) {
+            for (auto node : curr) {
+                if (node->left != nullptr)
+                    next.push_back(node->left);
+                if (node->right != nullptr)
+                    next.push_back(node->right);
+                delete node;
+            }
+            curr = next;
+            next.clear();
+        }
+    }
+
+    void printTree() {
+        PrintTree(root);
+    }
+
+    void printCodeTable() {
+        for (map<byte, vector<bool>>::iterator itr = code_table.begin();
+            itr != code_table.end(); ++itr) {
+            std::cout << itr->first << ": ";
+            for (int i = 0; i < itr->second.size(); ++i) {
+                std::cout << (int)itr->second[i];
+            }
+            std::cout << std::endl;
+        }
+    }
+    vector<bool> encode(string s_) {
+        s = s_;
+        MakeTree();
+        BuildTable(root);
+        return StringToBin();
+    }
+
+private:
+    string s;
+    struct NodeComparator {
+        bool operator()(const Node* left, const Node* right) const {
+            return left->elementsCount < right->elementsCount;
+        }
+    };
+
+    vector<bool> StringToBin() {
+        vector<bool> bin;
+        for (int i = 0; i < s.length(); ++i) {
+            byte current_byte = s[i];
+            vector<bool> current_byte_table_code = code_table[current_byte];
+            for (int i = 0; i < current_byte_table_code.size(); ++i) {
+                bin.push_back(current_byte_table_code[i]);
+            }
+        }
+        return bin;
+    }
+
+    map<byte, size_t> GetFreqs(string s) {
+        map<byte, size_t> frequency;
+        for (int i = 0; i < s.length(); ++i) {
+            byte byteChar = s[i];
+            frequency[byteChar]++;
+        }
+        return frequency;
+    }
+
+    void PrintTree(Node* node, int k = 0) {
+        if (node) {
+            PrintTree(node->left, k + 3);
+            for (int i = 0; i < k; ++i) {
+                std::cout << " ";
+            }
+            if (node->byteChar)
+                std::cout << node->elementsCount << "(" << node->byteChar << ")"
+                << std::endl;
+            else
+                std::cout << node->elementsCount << std::endl;
+            PrintTree(node->right, k + 3);
+        }
+    }
+
+    void MakeTree() {
+        if (s == "")
+            return;
+
+        list<Node*> t;
+        map<byte, size_t> frequency = GetFreqs(s);
+
+        for (map<byte, size_t>::iterator itr = frequency.begin();
+            itr != frequency.end(); ++itr) {
+            Node* p = new Node();
+            p->byteChar = itr->first;
+            p->elementsCount = itr->second;
+            t.push_back(p);
+        }
+
+        while (t.size() != 1) {
+            t.sort(NodeComparator());
+
+            Node* SonL = t.front();
+            t.pop_front();
+            Node* SonR = t.front();
+            t.pop_front();
+
+            Node* parent = new Node(SonL, SonR);
+            t.push_back(parent);
+        }
+        root = t.front();
+    }
+
+    void BuildTable(Node* root) {
+        if (!root)
+            return;
+
+        if (root->left) {
+            code.push_back(0);
+            BuildTable(root->left);
+        }
+
+        if (root->right) {
+            code.push_back(1);
+            BuildTable(root->right);
+        }
+
+        if (!root->left && !root->right)
+            code_table[root->byteChar] = code;
+
+        code.pop_back();
+    }
+    vector<bool> code;
+
+public:
+    map<byte, vector<bool>> code_table;
+    Node* root = nullptr;
+};
+
+Node* ROOT;
+map<byte, vector<bool>> CODE_TABLE;
+
+void Encode(IInputStream& original, IOutputStream& compressed) {
+    string inputString = "";
+    byte buf = 0;
+
+    while (original.Read(buf)) {
+        inputString += buf;
+    }
+
+    HuffmanEncoder hf;
+    vector<bool> code = hf.encode(inputString);
+    TREE_BINS.clear();
+    saveTree(hf.root, TREE_BINS);
+    int excessBits = code.size() % 8;
+    std::bitset<8> binary(excessBits);
+    std::string excBitNum = binary.to_string();
+    vector<bool> finalCode;
+
+    for (int i = 0; i < excBitNum.size(); ++i) {
+        bool num_bit = (excBitNum[i] == '1') ? true : false;
+        finalCode.push_back(num_bit);
+    }
+    int finalCodeSize = code.size();
+
+    for (int i = 0; i < code.size(); ++i) {
+        finalCode.push_back(code[i]);
+    }
+
+    int count = 0;
+    buf = 0;
+    bool isLastByteWritten = false;
+
+    for (int i = 0; i < finalCode.size(); ++i) {
+
+        buf = buf | (finalCode[i] << (7 - count));
+        ++count;
+        isLastByteWritten = false;
+        if (count == 8) {
+
+            isLastByteWritten = true;
+            count = 0;
+            compressed.Write(buf);
+            buf = 0;
+        }
+    }
+
+    bool isFinal = finalCode[finalCode.size() - 1];
+    if (excessBits > 0) {
+        compressed.Write(buf);
+    }
+
+    CODE_TABLE = hf.code_table;
+    ROOT = hf.root;
+}
+
+void Decode(IInputStream& compressed, IOutputStream& original) {
+    int count = 0;
+    Node* ROOT = loadTree(TREE_BINS);
+    Node* node = ROOT;
+
+    std::string result;
+    streamToString(compressed, result);
+    std::string binExcBits = result.substr(0, 8);
+    int excBits = 8 - std::stoi(binExcBits, nullptr, 2);
+
+    if (excBits == 8) {
+        excBits = 0;
+    }
+
+    result = result.substr(8, result.size());
+    result = result.substr(0, result.size() - excBits);
+
+    for (size_t i = 0; i < result.size(); ++i) {
+        bool cur_bit = (result[i] == '1') ? true : false;
+
+        if (cur_bit)
+            node = node->right;
+        else
+            node = node->left;
+
+        if (!node->left && !node->right) {
+            original.Write(node->byteChar);
+            node = ROOT;
+        }
+    }
+}
+
+void binToString(byte byte_, string& string_) {
+    for (int i = 7; i >= 0; i--) {
+        string_ += ((byte_ >> i) & 1) ? '1' : '0';
+    }
+}
+
+void streamToString(IInputStream& compressed, string& res) {
+    string str;
+    int strLen;
+    byte byte_ = 0;
+
+    while (compressed.Read(byte_)) {
+        str = "";
+        binToString(byte_, str);
+        strLen = str.length();
+        res += str;
+    }
+}
+
+
+
+// TESTS
+struct ostr final : public IOutputStream {
+    ostr(std::string filename) {
+        f.open(filename, std::ios_base::out | std::ios_base::binary);
+    }
+    void close() { f.close(); }
+    void Write(byte value) override { f.put(value); }
+    std::ofstream f;
+};
+
+struct istr final : public IInputStream {
+    istr(std::string filename) {
+        f.open(filename, std::ios_base::in | std::ios_base::binary);
+    }
+    void close() { f.close(); }
+
+    ~istr() { f.close(); }
+    bool Read(byte& value) override {
+        char c;
+        f.get(c);
+        value = static_cast<unsigned char>(c);
+        return !f.eof();
+    }
+    std::ifstream f;
+};
+bool compareFiles(const std::string& file1, const std::string& file2) {
+    std::ifstream ifs1(file1, std::ios::binary | std::ios::ate);
+    std::ifstream ifs2(file2, std::ios::binary | std::ios::ate);
+
+    if (ifs1.fail() || ifs2.fail()) {
+        std::cout << "Error opening file" << std::endl;
+        return false; // Ошибка открытия файла
+    }
+
+    if (ifs1.tellg() != ifs2.tellg()) {
+        std::cout << "Error files size" << std::endl;
+        return false; // Размеры файлов не совпадают
+    }
+
+    ifs1.seekg(0, std::ios::beg);
+    ifs2.seekg(0, std::ios::beg);
+
+    char ch1, ch2;
+    while (ifs1.get(ch1) && ifs2.get(ch2)) {
+        if (ch1 != ch2) {
+            std::cout << "Error char comparing" << std::endl;
+            return false; // Содержимое файлов не совпадает
+        }
+    }
+
+    return true; // Содержимое файлов совпадает
+}
+
+bool make_test(std::string& filename_encod, std::string& filename_out) {
+
+    istr original(filename_encod);
+    ostr compressed("output");
+    Encode(original, compressed);
+    original.close();
+    compressed.close();
+    istr compr("output");
+    ostr result(filename_out);
+    Decode(compr, result);
+    compr.close();
+    result.close();
+    return compareFiles(filename_encod, filename_out);
+}
+void tests() {
+    std::string filename_encod;
+    std::string filename_out;
+
+    filename_encod = "sem.txt";
+    filename_out = "out.txt";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for .txt test" << std::endl;
+
+    filename_encod = "1.jpeg";
+    filename_out = "out.jpeg";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for .jpeg test" << std::endl;
+
+    filename_encod = "b_t.txt";
+    filename_out = "out.txt";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for b_t.txt test" << std::endl;
+
+    filename_encod = "empty.txt";
+    filename_out = "out_e.txt";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for empty.txt test" << std::endl;
+
+    filename_encod = "1";
+    filename_out = "out";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for no ext test" << std::endl;
+
+    filename_encod = "1.mp4";
+    filename_out = "out.mp4";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for .mp4 test" << std::endl;
+
+    filename_encod = "1.zip";
+    filename_out = "out.zip";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for .zip test" << std::endl;
+
+    filename_encod = "1.mp3";
+    filename_out = "out.mp3";
+    assert(make_test(filename_encod, filename_out));
+    std::cout << "Suscess for .mp3 test" << std::endl;
+}
+int main() {
+    tests();
+    return 0;
+}

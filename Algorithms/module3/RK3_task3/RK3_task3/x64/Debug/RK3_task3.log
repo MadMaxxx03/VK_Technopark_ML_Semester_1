@@ -1,0 +1,3 @@
+﻿  RK3_task3.cpp
+C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module3\RK3_task3\RK3_task3\RK3_task3.cpp(36,1): warning C4267: return: преобразование из "size_t" в "int"; возможна потеря данных
+  RK3_task3.vcxproj -> C:\Users\baben_bakg1j1\Programming\TechnoparkML\Algorithms\module3\RK3_task3\x64\Debug\RK3_task3.exe

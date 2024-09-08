@@ -1,0 +1,54 @@
+#include <vector>
+#include <iostream>
+
+class DSU {
+public:
+    DSU(int count);
+    int FindParent(int v);
+    void Union(int v1, int v2);
+
+private:
+    std::vector<int> parent;
+    std::vector<int> rank;
+};
+
+DSU::DSU(int count) :
+    parent(count),
+    rank(count)
+{
+    for (int i = 0; i < count; i++) {
+        parent[i] = i;
+    }
+}
+
+int DSU::FindParent(int v) {
+    if (v == parent[v]) {
+        return v;
+    }
+    parent[v] = FindParent(parent[v]);
+    return parent[v];
+}
+
+void DSU::Union(int v1, int v2) {
+    int p1 = FindParent(v1);
+    int p2 = FindParent(v2);
+    if (p1 == p2) {
+        return;
+    }
+
+    if (rank[p1] < rank[p2]) {
+        parent[p1] = p2;
+    }
+    else {
+        parent[p2] = p1;
+        if (rank[p1] == rank[p2]) {
+            ++rank[p1];
+        }
+    }
+}
+
+int main()
+{
+    std::cout << "Hello World!\n";
+}
+

@@ -1,0 +1,431 @@
+swagger: "2.0"
+info:
+  title: API библиотеки Steam
+  description: Интерфейс для управления библиотекой игр Steam пользователя.
+  version: 1.0.0
+host: api.steampowered.com
+schemes:
+  - https
+paths:
+  /IParentalService/GetParentalSettings:
+    get:
+      summary: Получение списка игр в библиотеке пользователя.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Personal user id
+          required: false
+          type: string
+          format: int64
+      responses:
+        "200":
+          description: Список игр.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GameShort'
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+  /IClientCommService/EnableOrDisableDownloads:
+    post:
+      summary: Установка игры в библиотеке пользователя.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: client_instanceid
+          in: query
+          description: Client instance ID
+          required: false
+          type: string
+          format: uint64
+        - name: enable
+          in: query
+          description: Enable or disable the download
+          required: false
+          type: boolean
+      responses:
+        "200":
+          description: Успешная установка.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка установки.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Installation error."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+  /IStoreBrowseService/GetItems:
+    get:
+      summary: Получение информации об игре в библиотеке пользователя.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: ids
+          in: query
+          description: Store item IDs
+          required: false
+          type: array
+          items:
+            type: integer
+      responses:
+        "200":
+          description: Информация об игре.
+          schema:
+            $ref: '#/definitions/Game'
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+  
+  /IStoreBrowseService/GetItems/{gameId}:
+    put:
+      summary: Установка игры как установленной.
+      parameters:
+        - name: gameId
+          in: path
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Успешная установка.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Неверный идентификатор игры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid game ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+    delete:
+      summary: Удаление игры из библиотеки пользователя.
+      parameters:
+        - name: gameId
+          in: path
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Успешное удаление.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              itemid:
+                type: integer
+                format: int64
+        "400":
+          description: Неверный идентификатор игры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid game ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+  /IAccountPrivateAppsService/SetAppVisibility:
+    post:
+      summary: Управление видимостью игры.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: appids
+          in: query
+          description: Application IDs
+          required: false
+          type: array
+          items:
+            type: integer
+        - name: private
+          in: query
+          description: Set to true to hide the game, false to unhide
+          required: false
+          type: boolean
+      responses:
+        "200":
+          description: Видимость игры успешно изменена.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка изменения видимости.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Visibility change error."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+  /profiles/games/subscriptions:
+    get:
+      summary: Получение списка игр из подписок.
+      responses:
+        "200":
+          description: Список подписок.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GameShort'
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+  /profiles/games/wishlist:
+    get:
+      summary: Получение списка игр из желаемого.
+      responses:
+        "200":
+          description: Список игр.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/GameShort'
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+  
+  /games/followgame/{gameId}:
+    post:
+      summary: Добавление игры в подписки.
+      parameters:
+        - name: gameId
+          in: path
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Успешное добавление в подписки.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Неверный идентификатор игры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid game ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+  /games/stopfollowing/{gameId}:
+    delete:
+      summary: Удаление игры из подписок.
+      parameters:
+        - name: gameId
+          in: path
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Успешное удаление из подписок.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+              itemid:
+                type: integer
+                format: int64
+        "400":
+          description: Неверный идентификатор игры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid game ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+          
+definitions:
+  Game:
+    type: object
+    properties:
+      gameId:
+        type: integer
+        description: Идентификатор игры.
+      name:
+        type: string
+        description: Название игры.
+      type:
+        type: string
+        description: Тип игры (например, "игра", "DLC").
+      developers:
+        type: array
+        description: Список разработчиков игры.
+        items:
+          type: string
+            
+  GameShort:
+    type: object
+    properties:
+      gameId:
+        type: integer
+        description: Идентификатор игры.
+      name:
+        type: string
+        description: Название игры.
+          
+  DelItem:
+    type: object
+    properties:
+      itemid:
+        type: integer
+        format: int64
+    required:
+      - itemid

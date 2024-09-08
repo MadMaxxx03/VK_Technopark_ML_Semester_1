@@ -1,0 +1,559 @@
+swagger: "2.0"
+info:
+  title: API Страницы игры Steam
+  description: Интерфейс для управления информацией о конкретной игре на странице игры Steam.
+  version: 1.0.0
+host: api.steampowered.com
+schemes:
+  - https
+paths:
+  /IGamePageService/GetGameDetails:
+    get:
+      summary: Получение подробной информации об игре.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: gameid
+          in: query
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Подробная информация об игре.
+          schema:
+            $ref: '#/definitions/GameDetails'
+        "400":
+          description: Неверный идентификатор игры.
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          
+  /IGamePageService/GetGameReviews:
+    get:
+      summary: Получение отзывов об игре.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: gameid
+          in: query
+          description: Game ID
+          required: true
+          type: integer
+        - name: count
+          in: query
+          description: Количество отзывов для получения (по умолчанию 10).
+          required: false
+          type: integer
+      responses:
+        "200":
+          description: Список отзывов об игре.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Review'
+        "400":
+          description: Неверный идентификатор игры.
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          
+  /IGamePageService/GetGameAchievements:
+    get:
+      summary: Получение достижений игры.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: gameid
+          in: query
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Список достижений игры.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Achievement'
+        "400":
+          description: Неверный идентификатор игры.
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          
+  /IGamePageService/GetGameMedia:
+    get:
+      summary: Получение медиа (скриншоты, видео) игры.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: gameid
+          in: query
+          description: Game ID
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Список медиа файлов.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Media'
+        "400":
+          description: Неверный идентификатор игры.
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          
+  /IGameReviewService/SubmitReview:
+    post:
+      summary: Публикация отзыва к игре.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: gameid
+          in: query
+          description: Идентификатор игры
+          required: true
+          type: integer
+        - name: review_text
+          in: body
+          description: Текст отзыва
+          required: true
+          schema:
+            type: object
+            properties:
+              text:
+                type: string
+        - name: rating
+          in: query
+          description: Оценка игры (например, 1-5)
+          required: false
+          type: integer
+          minimum: 1
+          maximum: 5
+      responses:
+        "200":
+          description: Отзыв успешно опубликован.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка валидации данных. Например, неверный формат данных.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+            
+  /IGameReviewService/UpdateReview:
+    put:
+      summary: Изменение отзыва к игре.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: gameid
+          in: query
+          description: Идентификатор игры
+          required: true
+          type: integer
+        - name: reviewid
+          in: query
+          description: Идентификатор отзыва
+          required: true
+          type: integer
+        - name: review_text
+          in: body
+          description: Текст отзыва
+          required: true
+          schema:
+            type: object
+            properties:
+              text:
+                type: string
+        - name: rating
+          in: query
+          description: Оценка игры (например, 1-5)
+          required: false
+          type: integer
+          minimum: 1
+          maximum: 5
+      responses:
+        "200":
+          description: Отзыв успешно изменен.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка валидации данных. Например, неверный формат данных.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "404":
+          description: Отзыв не найден.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Review not found."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+                
+  /IGameReviewService/DeleteReview:
+    delete:
+      summary: Удаление отзыва к игре.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: gameid
+          in: query
+          description: Идентификатор игры
+          required: true
+          type: integer
+        - name: reviewid
+          in: query
+          description: Идентификатор отзыва
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Отзыв успешно удален.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка запроса. Например, неверный формат данных.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid request format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "404":
+          description: Отзыв не найден.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Review not found."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+
+                
+  /games/followgame:
+    post:
+      summary: Добавление игры в подписки.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: gameid
+          in: body
+          description: Идентификатор игры
+          required: true
+          schema:
+            type: object
+            properties:
+              gameId:
+                type: integer
+      responses:
+        "200":
+          description: Успешное добавление в подписки.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Неверный идентификатор игры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid game ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+  
+  /games/stopfollowing:
+    delete:
+      summary: Удаление игры из подписок.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: gameid
+          in: body
+          description: Идентификатор игры
+          required: true
+          schema:
+            type: object
+            properties:
+              gameId:
+                type: integer
+      responses:
+        "200":
+          description: Успешное удаление из подписок.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Неверный идентификатор игры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid game ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+
+definitions:
+  GameDetails:
+    type: object
+    properties:
+      gameId:
+        type: integer
+        description: Идентификатор игры.
+      name:
+        type: string
+        description: Название игры.
+      description:
+        type: string
+        description: Описание игры.
+      releaseDate:
+        type: string
+        format: date
+        description: Дата выпуска игры.
+      developers:
+        type: array
+        description: Список разработчиков игры.
+        items:
+          type: string
+      publishers:
+        type: array
+        description: Список издателей игры.
+        items:
+          type: string
+      genres:
+        type: array
+        description: Жанры игры.
+        items:
+          type: string
+      platforms:
+        type: array
+        description: Платформы, на которых доступна игра.
+        items:
+          type: string
+            
+  Review:
+    type: object
+    properties:
+      reviewId:
+        type: integer
+        description: Идентификатор отзыва.
+      author:
+        type: string
+        description: Автор отзыва.
+      content:
+        type: string
+        description: Текст отзыва.
+      rating:
+        type: integer
+        description: Оценка, данная игрой.
+      date:
+        type: string
+        format: date-time
+        description: Дата создания отзыва.
+            
+  Achievement:
+    type: object
+    properties:
+      achievementId:
+        type: integer
+        description: Идентификатор достижения.
+      name:
+        type: string
+        description: Название достижения.
+      description:
+        type: string
+        description: Описание достижения.
+      iconUrl:
+        type: string
+        description: URL иконки достижения.
+      
+  Media:
+    type: object
+    properties:
+      mediaId:
+        type: integer
+        description: Идентификатор медиа файла.
+      type:
+        type: string
+        description: Тип медиа (например, "скриншот", "видео

@@ -1,0 +1,613 @@
+swagger: "2.0"
+info:
+  title: API для Музыкального Раздела Steam
+  description: Интерфейс для управления музыкальными композициями, созданными пользователями под влиянием игр в Steam.
+  version: 1.0.0
+host: api.steampowered.com
+schemes:
+  - https
+paths:
+  /IMusicService/GetTracks:
+    get:
+      summary: Получение списка музыкальных композиций.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: gameid
+          in: query
+          description: Идентификатор игры (для фильтрации композиций)
+          required: false
+          type: integer
+      responses:
+        "200":
+          description: Список музыкальных композиций.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Track'
+        "400":
+          description: Ошибка запроса. Неверные параметры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid request parameters."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+  
+  /IMusicService/GetTrack/{trackId}:
+    get:
+      summary: Получение информации о музыкальной композиции.
+      parameters:
+        - name: trackId
+          in: path
+          description: Идентификатор композиции
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Информация о музыкальной композиции.
+          schema:
+            $ref: '#/definitions/Track'
+        "400":
+          description: Ошибка запроса. Неверный идентификатор композиции.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid track ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+
+  /IMusicService/SubmitTrack:
+    post:
+      summary: Публикация новой музыкальной композиции.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: track
+          in: body
+          description: Информация о музыкальной композиции
+          required: true
+          schema:
+            $ref: '#/definitions/NewTrack'
+      responses:
+        "200":
+          description: Музыкальная композиция успешно опубликована.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка запроса. Неверные данные.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+  
+  /IMusicService/UpdateTrack/{trackId}:
+    put:
+      summary: Изменение информации о музыкальной композиции.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: trackId
+          in: path
+          description: Идентификатор композиции
+          required: true
+          type: integer
+        - name: track
+          in: body
+          description: Обновленная информация о музыкальной композиции
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateTrack'
+      responses:
+        "200":
+          description: Информация о музыкальной композиции успешно обновлена.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка запроса. Неверные данные.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "404":
+          description: Музыкальная композиция не найдена.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Track not found."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+
+  /IMusicService/DeleteTrack/{trackId}:
+    delete:
+      summary: Удаление музыкальной композиции.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: trackId
+          in: path
+          description: Идентификатор композиции
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Музыкальная композиция успешно удалена.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка запроса. Неверные данные.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "404":
+          description: Музыкальная композиция не найдена.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Track not found."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+
+  /IMusicService/SearchTracks:
+    get:
+      summary: Поиск музыкальных композиций.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: query
+          in: query
+          description: Поисковый запрос (название композиции или имя автора)
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Результаты поиска музыкальных композиций.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Track'
+        "400":
+          description: Ошибка запроса. Неверные параметры.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid request parameters."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+
+  /IMusicService/GetTrackReviews/{trackId}:
+    get:
+      summary: Получение отзывов о музыкальной композиции.
+      parameters:
+        - name: trackId
+          in: path
+          description: Идентификатор композиции
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Список отзывов о музыкальной композиции.
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/Review'
+        "400":
+          description: Ошибка запроса. Неверный идентификатор композиции.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid track ID."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+
+  /IMusicService/SubmitReview:
+    post:
+      summary: Публикация отзыва о музыкальной композиции.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: trackId
+          in: query
+          description: Идентификатор композиции
+          required: true
+          type: integer
+        - name: review
+          in: body
+          description: Информация о новом отзыве
+          required: true
+          schema:
+            $ref: '#/definitions/NewReview'
+      responses:
+        "200":
+          description: Отзыв успешно опубликован.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка запроса. Неверные данные.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+
+  /IMusicService/DeleteReview/{reviewId}:
+    delete:
+      summary: Удаление отзыва о музыкальной композиции.
+      parameters:
+        - name: key
+          in: query
+          description: Access key
+          required: true
+          type: string
+        - name: steamid
+          in: query
+          description: Steam ID пользователя
+          required: true
+          type: string
+          format: int64
+        - name: reviewId
+          in: path
+          description: Идентификатор отзыва
+          required: true
+          type: integer
+      responses:
+        "200":
+          description: Отзыв успешно удален.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: true
+        "400":
+          description: Ошибка запроса. Неверные данные.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Invalid data format."
+        "401":
+          description: Unauthorized. Access is denied. Retrying will not help. Please verify your key parameter.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Unauthorized access."
+        "404":
+          description: Отзыв не найден.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Review not found."
+        "500":
+          description: Внутренняя ошибка сервера.
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+                example: false
+              error:
+                type: string
+                example: "Internal server error."
+
+definitions:
+  Track:
+    type: object
+    properties:
+      trackId:
+        type: integer
+        description: Идентификатор композиции.
+      title:
+        type: string
+        description: Название композиции.
+      duration:
+        type: integer
+        description: Продолжительность композиции в секундах.
+      url:
+        type: string
+        description: URL для прослушивания композиции.
+      gameId:
+        type: integer
+        description: Идентификатор игры, связанной с композицией.
+      steamId:
+        type: string
+        format: int64
+        description: Steam ID автора композиции.
+        
+  NewTrack:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Название композиции.
+      duration:
+        type: integer
+        description: Продолжительность композиции в секундах.
+      url:
+        type: string
+        description: URL для прослушивания композиции.
+      gameId:
+        type: integer
+        description: Идентификатор игры, связанной с композицией.
+
+  UpdateTrack:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Название композиции.
+      duration:
+        type: integer
+        description: Продолжительность композиции в секундах.
+      url:
+        type: string
+        description: URL для прослушивания композиции.
+
+  Review:
+    type: object
+    properties:
+      reviewId:
+        type: integer
+        description: Идентификатор отзыва.
+      steamId:
+        type: string
+        format: int64
+        description: Steam ID автора отзыва.
+      rating:
+        type: integer
+        description: Оценка композиции.
+      comment:
+        type: string
+        description: Текст комментария.
+
+  NewReview:
+    type: object
+    properties:
+      rating:
+        type: integer
+        description: Оценка композиции.
+      comment:
+        type: string
+        description: Текст комментария.
