@@ -5,6 +5,7 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/y/MadMaxxx03/VK_Technopark_ML_Semester_1)
 ### The repository contains all homeworks and projects, that I completed, throughout this course.
 ### Included disciplines are as follows:
-1. 
-2. 
-3. 
+1. Introduction to machine learning
+2. Introduction to Python
+3. Algorithms and data structures
+4. System design
